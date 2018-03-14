@@ -10,7 +10,7 @@ func StringVet() string {
 		return ""
 	}
 
-	return fmt.Sprintf("%d%d", 1, 3.1)
+	return fmt.Sprintf("%d%d", 1, 3.12)
 }
 
 func testLint(bar int) int {
