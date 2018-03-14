@@ -7,7 +7,47 @@
 #   $ go get -v code.google.com/p/go.tools/cmd/vet
 # To use the "golint" command:
 #   $ go get -v github.com/golang/lint/golint
-go fmt ./...
-go vet ./...
-golint .
-# go test ./...
+
+# go build >/dev/null 2>&1
+# if [ $? -ne 0 ]
+# then
+# 	echo "Failed to build project. Please check the output of"
+# 	echo "go build or run commit with --no-verify if you know"
+# 	echo "what you are doing."
+# 	exit 1
+# fi
+
+go fmt ./... >/dev/null 2>&1
+if [ $? -ne 0 ]
+then
+	echo "Failed to run go fmt. This shouldn't happen. Please"
+	echo "check the output of the command to see what's wrong"
+	echo "or run commit with --no-verify if you know what you"
+	echo "are doing."
+	exit 1
+fi
+
+golint -set_exit_status ./... >linter.log 2>&1
+if [ $? -ne 0 ]
+then
+	echo "'golint' has detected potential issues in the project."
+	echo "Please check the output of 'golint' in: 'linter.log'"
+	exit 1
+fi
+
+go vet ./... >vet.log 2>&1
+if [ $? -ne 0 ]
+then
+	echo "'go vet' has detected potential issues in the project."
+    echo $GOPATH
+	echo "Please check the output of 'go vet' in: 'vet.log'"
+	exit 1
+fi
+
+go test ./... >unit_tests.log 2>&1
+if [ $? -ne 0 ]
+then
+	echo "Failed to run tests."
+	echo "Please check the output of 'go test' in: 'unit_tests.log'"
+	exit 1
+fi
