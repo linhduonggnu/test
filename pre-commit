@@ -35,6 +35,8 @@ if [ $? -ne 0 ]
 then
 	echo "'golint': has detected potential issues in the project."
 	echo "Please check the output of 'golint' in: 'commit_logs/linter.log'"
+    echo "Details:"
+    cat commit_logs/linter.log
 	exit 1
 fi
 
@@ -43,13 +45,17 @@ if [ $? -ne 0 ]
 then
 	echo "'go vet': has detected potential issues in the project."
 	echo "Please check the output of 'go vet' in: 'commit_logs/vet.log'"
+    echo "Details:"
+    cat commit_logs/vet.log
 	exit 1
 fi
 
-go test ./... >commit_logs/unit_tests.log 2>&1
+go test -v ./... >commit_logs/unit_tests.log 2>&1
 if [ $? -ne 0 ]
 then
 	echo "'go test': Failed to run tests."
 	echo "Please check the output of 'go test' in: 'commit_logs/unit_tests.log'"
+    echo "Details:"
+    cat commit_logs/unit_tests.log
 	exit 1
 fi
