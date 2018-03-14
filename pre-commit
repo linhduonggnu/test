@@ -1,13 +1,5 @@
 #!/bin/sh
 
-# Save this file as ".git/hooks/pre-commit" in your
-# git repository and set it to executable.
-#
-# To use the "go vet" command:
-#   $ go get -v code.google.com/p/go.tools/cmd/vet
-# To use the "golint" command:
-#   $ go get -v github.com/golang/lint/golint
-
 # go build >/dev/null 2>&1
 # if [ $? -ne 0 ]
 # then
@@ -20,6 +12,7 @@
 # try to create commit_logs folder
 mkdir -p commit_logs
 
+# run go fmt
 go fmt ./... >/dev/null 2>&1
 if [ $? -ne 0 ]
 then
@@ -30,6 +23,7 @@ then
 	exit 1
 fi
 
+# run golint
 golint -set_exit_status ./... >commit_logs/linter.log 2>&1
 if [ $? -ne 0 ]
 then
@@ -40,6 +34,7 @@ then
 	exit 1
 fi
 
+# run go vet
 go vet ./... >commit_logs/vet.log 2>&1
 if [ $? -ne 0 ]
 then
@@ -50,6 +45,7 @@ then
 	exit 1
 fi
 
+# run go test
 go test -v ./... >commit_logs/unit_tests.log 2>&1
 if [ $? -ne 0 ]
 then
